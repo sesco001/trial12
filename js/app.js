@@ -1,4 +1,4 @@
-const API = 'http://localhost:4000/api';  // change to your backend URL
+const API = ' https://breact.onrender.com/api';  // change to your backend URL
 const token = localStorage.getItem('token');
 
 function setToken(t) {
