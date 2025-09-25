@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Login / Signup</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Signup</h2>
+    <form id="signup">
+      <input name="name" placeholder="Name" required>
+      <input name="email" placeholder="Email" required>
+      <input name="password" placeholder="Password" type="password" required>
+      <input name="ref" placeholder="Referral Code (optional)">
+      <button type="submit">Signup</button>
+    </form>
+
+    <h2>Login</h2>
+    <form id="login">
+      <input name="email" placeholder="Email" required>
+      <input name="password" placeholder="Password" type="password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <script>
+  const API = 'http://localhost:4000/api';
+
+  document.getElementById('signup').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = { name: fd.get('name'), email: fd.get('email'), password: fd.get('password'), referral: fd.get('ref') };
+    const res = await fetch(API + '/auth/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    const data = await res.json();
+    if (data.token) { localStorage.setItem('token', data.token); window.location = 'dashboard.html'; }
+    else alert(JSON.stringify(data));
+  });
+
+  document.getElementById('login').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = { email: fd.get('email'), password: fd.get('password') };
+    const res = await fetch(API + '/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    const data = await res.json();
+    if (data.token) { localStorage.setItem('token', data.token); window.location = 'dashboard.html'; }
+    else alert(JSON.stringify(data));
+  });
+  </script>
+</body>
+</html>
