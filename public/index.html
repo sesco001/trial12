@@ -1,111 +1,31 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Welcome | Earn & Learn Hub</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Earn & Learn Hub</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; 
-      padding: 0;
-      background: #f4f4f9;
-      color: #333;
-    }
-    header {
-      background: linear-gradient(135deg, #4e54c8, #8f94fb);
-      color: white;
-      padding: 50px 20px;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
-    header p {
-      margin-top: 10px;
-      font-size: 1.2rem;
-    }
-    .features {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      margin: 40px 20px;
-    }
-    .feature {
-      background: white;
-      padding: 20px;
-      margin: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      flex: 1;
-      min-width: 250px;
-      max-width: 300px;
-      text-align: center;
-    }
-    .feature h3 {
-      margin-bottom: 10px;
-      color: #4e54c8;
-    }
-    .container {
-      background: #fff;
-      padding: 30px;
-      max-width: 400px;
-      margin: 30px auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 20px;
-    }
-    input {
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      background: #4e54c8;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #373dc5;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f9; }
+    header { background: linear-gradient(135deg,#4e54c8,#8f94fb); color: white; padding: 50px 20px; text-align: center; }
+    header h1 { margin: 0; font-size: 2.5rem; }
+    header p { margin-top: 10px; font-size: 1.2rem; }
+    .container { max-width: 400px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    form { display: flex; flex-direction: column; margin-bottom: 20px; }
+    input { padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 12px; border: none; border-radius: 6px; background: #4e54c8; color: white; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #373dc5; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Welcome to Earn & Learn Hub</h1>
-    <p>Your gateway to opportunities: Earn from assignments, learn with the best tools, and grow with referrals.</p>
+    <h1>Earn & Learn Hub</h1>
+    <p>Earn from assignments, access AI tools, and grow with referrals.</p>
   </header>
-
-  <section class="features">
-    <div class="feature">
-      <h3>💼 Earn</h3>
-      <p>Get paid for local and international assignments. Upload your work directly and cash out securely.</p>
-    </div>
-    <div class="feature">
-      <h3>📚 Learn</h3>
-      <p>Access premium tools — from AI humanisers to research platforms — and become a top performer.</p>
-    </div>
-    <div class="feature">
-      <h3>🤝 Refer & Earn</h3>
-      <p>Invite friends using your unique referral link. Earn rewards every time they join and succeed.</p>
-    </div>
-  </section>
 
   <div class="container">
     <h2>Signup</h2>
     <form id="signup">
       <input name="name" placeholder="Name" required>
-      <input name="email" placeholder="Email" required>
+      <input name="email" placeholder="Email" type="email" required>
       <input name="password" placeholder="Password" type="password" required>
       <input name="ref" placeholder="Referral Code (optional)">
       <button type="submit">Signup</button>
@@ -113,80 +33,70 @@
 
     <h2>Login</h2>
     <form id="login">
-      <input name="email" placeholder="Email" required>
+      <input name="email" placeholder="Email" type="email" required>
       <input name="password" placeholder="Password" type="password" required>
       <button type="submit">Login</button>
     </form>
   </div>
 
 <script>
-  // Use environment variable or fallback to local
-  const API = window.REACT_APP_BACKEND_URL || 'https://breact.onrender.com/api';
+const API = 'https://breact.onrender.com/api';
 
-  // Signup form handler
-  const signupForm = document.getElementById('signup');
-  if (signupForm) {
-    signupForm.addEventListener('submit', async e => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const body = {
-        name: fd.get('name'),
-        email: fd.get('email'),
-        password: fd.get('password'),
-        referral: fd.get('ref')
-      };
+// Signup
+document.getElementById('signup').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = {
+    name: fd.get('name'),
+    email: fd.get('email'),
+    password: fd.get('password'),
+    referral: fd.get('ref')
+  };
 
-      try {
-        const res = await fetch(`${API}/auth/signup`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        const data = await res.json();
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          window.location.href = 'dashboard.html';
-        } else {
-          alert(data.message || JSON.stringify(data));
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Error connecting to server');
-      }
+  try {
+    const res = await fetch(`${API}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
     });
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      window.location.href = 'dashboard.html';
+    } else {
+      alert(data.message || JSON.stringify(data));
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Error connecting to server');
   }
+});
 
-  // Login form handler
-  const loginForm = document.getElementById('login');
-  if (loginForm) {
-    loginForm.addEventListener('submit', async e => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const body = {
-        email: fd.get('email'),
-        password: fd.get('password')
-      };
+// Login
+document.getElementById('login').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = { email: fd.get('email'), password: fd.get('password') };
 
-      try {
-        const res = await fetch(`${API}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        const data = await res.json();
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          window.location.href = 'dashboard.html';
-        } else {
-          alert(data.message || JSON.stringify(data));
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Error connecting to server');
-      }
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
     });
+    const data = await res.json();
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      window.location.href = 'dashboard.html';
+    } else {
+      alert(data.message || JSON.stringify(data));
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Error connecting to server');
   }
+});
 </script>
-
 </body>
 </html>
+
