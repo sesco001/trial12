@@ -1,8 +1,9 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>User Dashboard | Earn & Learn Hub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard | Assignment Hub</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     body {
@@ -65,6 +66,9 @@
       margin: 10px 0;
       word-wrap: break-word;
     }
+    @media(max-width: 600px){
+      .dashboard { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -85,7 +89,7 @@
     <div class="card assignments">
       <h3>📂 Assignments</h3>
       <ul id="assignments">
-        <li>No assignments yet.</li>
+        <li>Loading assignments...</li>
       </ul>
     </div>
 
@@ -112,29 +116,69 @@
   </div>
 
   <script>
-    // Simulated user data (replace with backend fetch later)
-    const user = {
-      name: "Alex",
-      email: "alex@example.com",
-      balance: 45.75,
-      referralCode: "REF12345",
-      referred: 3,
-      referralEarnings: 15.00,
-      status: "Verified",
-      assignments: [
-        {title: "Local Assignment 1", link: "#"},
-        {title: "International Assignment A", link: "#"}
-      ]
-    };
+    const token = localStorage.getItem("token");
+    if (!token) window.location.href = "index.html"; // redirect if not logged in
 
-    // Load user data into dashboard
-    document.getElementById("username").textContent = user.name;
-    document.getElementById("email").textContent = user.email;
-    document.getElementById("balance").textContent = "$" + user.balance.toFixed(2);
-    document.getElementById("status").textContent = user.status;
-    document.getElementById("refLink").textContent = 
-      window.location.origin + "/signup?ref=" + user.referralCode;
+    const API = "https://breact.onrender.com/api"; // your backend URL
 
-    // Assignments
-    const assignmentList = document.getElementById("assignments");
-    assign
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const user = await res.json();
+
+        // Fill user info
+        document.getElementById("username").textContent = user.name;
+        document.getElementById("email").textContent = user.email;
+        document.getElementById("balance").textContent = "$" + (user.balance || 0).toFixed(2);
+        document.getElementById("status").textContent = user.status || "Regular";
+        document.getElementById("refLink").textContent = window.location.origin + "/signup?ref=" + user.referralCode;
+
+        // Fill assignments
+        const assignmentList = document.getElementById("assignments");
+        assignmentList.innerHTML = "";
+        if (user.assignments && user.assignments.length) {
+          user.assignments.forEach(a => {
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="${a.link}" target="_blank">${a.title}</a>`;
+            assignmentList.appendChild(li);
+          });
+        } else {
+          assignmentList.innerHTML = "<li>No assignments yet.</li>";
+        }
+
+        // Fill referrals
+        const refStats = document.getElementById("refStats");
+        refStats.innerHTML = `
+          <li>Referred Users: ${user.referred || 0}</li>
+          <li>Total Earnings: $${(user.referralEarnings || 0).toFixed(2)}</li>
+        `;
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load dashboard. Please login again.");
+        localStorage.removeItem("token");
+        window.location.href = "index.html";
+      }
+    }
+
+    loadDashboard();
+
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "index.html";
+    }
+
+    function withdraw() {
+      alert("Withdraw feature coming soon!");
+    }
+
+    function copyReferral() {
+      const ref = document.getElementById("refLink").textContent;
+      navigator.clipboard.writeText(ref);
+      alert("Referral link copied!");
+    }
+  </script>
+</body>
+</html>
+
