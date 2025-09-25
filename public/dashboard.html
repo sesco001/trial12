@@ -2,63 +2,139 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>User Dashboard</title>
+  <title>User Dashboard | Earn & Learn Hub</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #4e54c8;
+    }
+    .balance {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      background: #4e54c8;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background: #373dc5;
+    }
+    .assignments ul, .referrals ul {
+      padding-left: 20px;
+    }
+    .ref-link {
+      background: #eee;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+      word-wrap: break-word;
+    }
+  </style>
 </head>
 <body>
-  <div class="navbar">
-    <h2>User Dashboard</h2>
-    <button onclick="logout()">Logout</button>
+  <header>
+    <h1>Welcome, <span id="username">User</span> 👋</h1>
+    <p>Grow, Earn, and Learn with our platform.</p>
+  </header>
+
+  <div class="dashboard">
+    <!-- Account Balance -->
+    <div class="card">
+      <h3>💰 Account Balance</h3>
+      <p class="balance" id="balance">$0.00</p>
+      <button class="btn" onclick="withdraw()">Withdraw</button>
+    </div>
+
+    <!-- Assignments -->
+    <div class="card assignments">
+      <h3>📂 Assignments</h3>
+      <ul id="assignments">
+        <li>No assignments yet.</li>
+      </ul>
+    </div>
+
+    <!-- Referrals -->
+    <div class="card referrals">
+      <h3>🤝 Referrals</h3>
+      <p>Your unique referral link:</p>
+      <div class="ref-link" id="refLink">Loading...</div>
+      <button class="btn" onclick="copyReferral()">Copy Link</button>
+      <h4>Referral Stats:</h4>
+      <ul id="refStats">
+        <li>Referred Users: 0</li>
+        <li>Total Earnings: $0</li>
+      </ul>
+    </div>
+
+    <!-- Profile -->
+    <div class="card">
+      <h3>👤 My Profile</h3>
+      <p>Email: <span id="email">example@email.com</span></p>
+      <p>Status: <span id="status">Regular</span></p>
+      <button class="btn" onclick="logout()">Logout</button>
+    </div>
   </div>
-  <div class="container">
-    <h3 id="welcome"></h3>
-    <p>Balance: <span id="balance">0</span></p>
-    <p>Verified: <span id="verified">false</span></p>
-    <p>Your referral link: <input id="refLink" style="width:100%"></p>
 
-    <h3>Assignments Available</h3>
-    <div id="assignments"></div>
-
-    <h3>Submit Assignment</h3>
-    <form id="submit" enctype="multipart/form-data">
-      <input name="title" placeholder="Title" required>
-      <textarea name="description" placeholder="Description"></textarea>
-      <input name="url" placeholder="Optional URL">
-      <textarea name="text" placeholder="Optional text"></textarea>
-      <input type="file" name="files" multiple>
-      <button>Submit</button>
-    </form>
-  </div>
-
-  <script src="js/app.js"></script>
   <script>
-  async function load() {
-    const dash = await apiGet('/user/dashboard');
-    document.getElementById('welcome').innerText = dash.welcome;
-    document.getElementById('balance').innerText = dash.user.balance;
-    document.getElementById('verified').innerText = dash.user.verified;
-    const ref = await apiGet('/user/referral');
-    document.getElementById('refLink').value = ref.link;
+    // Simulated user data (replace with backend fetch later)
+    const user = {
+      name: "Alex",
+      email: "alex@example.com",
+      balance: 45.75,
+      referralCode: "REF12345",
+      referred: 3,
+      referralEarnings: 15.00,
+      status: "Verified",
+      assignments: [
+        {title: "Local Assignment 1", link: "#"},
+        {title: "International Assignment A", link: "#"}
+      ]
+    };
 
-    const list = document.getElementById('assignments');
-    list.innerHTML = '';
-    dash.assignments.forEach(a=>{
-      const div = document.createElement('div');
-      div.className = 'card';
-      div.innerHTML = `<b>${a.title}</b><br>${a.description}`;
-      list.appendChild(div);
-    });
-  }
+    // Load user data into dashboard
+    document.getElementById("username").textContent = user.name;
+    document.getElementById("email").textContent = user.email;
+    document.getElementById("balance").textContent = "$" + user.balance.toFixed(2);
+    document.getElementById("status").textContent = user.status;
+    document.getElementById("refLink").textContent = 
+      window.location.origin + "/signup?ref=" + user.referralCode;
 
-  document.getElementById('submit').addEventListener('submit', async e=>{
-    e.preventDefault();
-    const form = new FormData(e.target);
-    const r = await fetch(API + '/user/submit', { method:'POST', headers: { Authorization: 'Bearer ' + token }, body: form });
-    const data = await r.json();
-    alert("Submitted!");
-  });
-
-  load();
-  </script>
-</body>
-</html>
+    // Assignments
+    const assignmentList = document.getElementById("assignments");
+    assign
